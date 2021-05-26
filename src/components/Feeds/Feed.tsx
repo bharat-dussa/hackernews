@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Comments from './Comments' 
-import {BrowserRouter as Router} from 'react-router-dom'
-
+    
 interface Feeds {
     by: string,
     time: number,

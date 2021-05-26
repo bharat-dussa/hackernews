@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
 import { FeedContainer } from '../../styled/Feeds/FeedContainer'
 import { Button } from '../../styled/utils/Button'
@@ -11,7 +12,7 @@ function Feeds() {
     const [error, setError] = useState<boolean>(false);
     const [index, setIndex] = useState<number>(6);
     const [feed, setFeed] = useState([]);
-    const [postpath, setPath] = useState('new');
+    const [postpath, setPath] = useState<string>('new');
     
 
     const getSingleFeed = async (feedId: number) => {
@@ -46,8 +47,6 @@ function Feeds() {
         .catch((err)=>{
             console.log('error', err)
         })
-
-   
     },[postpath])
        
     const handleNewPosts = () => {
@@ -102,7 +101,7 @@ function Feeds() {
             {
                 isLoading === false && feed.length > 5 && <div className={'load_more_btn'}>
                     <button onClick={loadMore}>{'Load More'}</button>
-                </div>
+                </div> 
             }
         </FeedContainer>
     )
