@@ -1,6 +1,3 @@
-import React,{ useState } from 'react';
-
-
 interface Comments {
     time: number
     commentscount: number
