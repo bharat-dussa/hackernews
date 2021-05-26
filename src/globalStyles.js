@@ -9,8 +9,6 @@ const GlobalStyle = createGlobalStyle`
         scroll-behavior:smooth;
         text-rendering: optimizeLegibility;
         font-family: Open Sans, sans-serif;
-        /* display: grid; */
-        /* justify-content: center; */
         --primary-color:#FBC91B;
         --grey-color:#F2F2F2;
         --black-text:#000000;

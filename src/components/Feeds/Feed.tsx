@@ -15,8 +15,8 @@ export default function Feed({ by, time, title, type, url}:Feeds) {
     return (
         <FeedStyled href={url} target={'_blank'}>
             <div className={'feed_card'}>
-                <h2>{title}</h2>
-                <p>{title}</p> 
+                <h2>{title ? title : 'Lorem Ipsum is simply dummy text.'}</h2>
+                <p>{title ? title : 'Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, …when an unknown printer took a galley of type and scrambled'}</p> 
                 {/* no description in api */}
                 <Comments time={time} commentscount={0} /> { /* // there are no comments in api */}
             </div>
@@ -95,6 +95,9 @@ const FeedStyled = styled.a`
         gap:2px;
         @media (min-width:768px) {
             gap:10px;
+        }
+        .card_timer_image{
+            display: flex;
         }
             img{
                 width:12px;
