@@ -14,4 +14,11 @@ export const Button = styled.button`
     :focus, :active,:target {
         background-color: var(--primary-color);
     }
+
+    .active-new {
+        background-color: var(--primary-color);
+    }
+    .active-past{
+        background-color: var(--primary-color);
+    }
 `

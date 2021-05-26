@@ -1,24 +1,30 @@
 import React from 'react'
 import styled from 'styled-components'
+import Comments from './Comments' 
+import {BrowserRouter as Router} from 'react-router-dom'
 
-export default function Feed() {
-
-
+interface Feeds {
+    by: string,
+    time: number,
+    title: string,
+    type: string,
+    url: string
+}
+const handleClick = (url:string) => {
+    console.log(url)
+    if(window ! === undefined){
+        window && window.open(url, "_blank")
+    }
+}
+export default function Feed({ by, time, title, type, url}:Feeds) {
+   
     return (
-        <FeedStyled>
+        <FeedStyled onClick={(url) => handleClick}>
             <div className={'feed_card'}>
-                <h2>Lorem Ipsum is simply dummy text.</h2>
-                <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, …when an unknown printer took a galley of type and scrambled</p>
-                <div className={'card_sub_section'}>
-                    <div className={'card_timer_flex'}>
-                        <div><img src={'../../../assests/clock.svg'} alt={'clock'}/></div>
-                        <div className={'card_timer_flex_span'}><span>1 min ago</span></div>
-                    </div>
-                    <div className={'vertical'}></div>
-                    <div className={'comments_count'}>
-                        <span>50 comments</span>
-                    </div>
-                </div>
+                <h2>{title}</h2>
+                <p>{title}</p> 
+                {/* no description in api */}
+                <Comments time={time} commentscount={0} /> { /* // there are no comments in api */}
             </div>
         </FeedStyled>
     )
@@ -28,6 +34,7 @@ export default function Feed() {
 const FeedStyled = styled.div`
     border: 19px;
     margin: 20px 0px;
+    cursor: pointer;
 .feed_card{
 
     background-color: #FFFFFF;
