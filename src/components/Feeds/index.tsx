@@ -24,11 +24,9 @@ function Feeds() {
           }
     }
     const getFeeds = async (value: string) => {
-        // setLoading(true)
         try {
             setLoading(true)
             const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            console.log('data',data.data)
             const feeds = await Promise.all(data.data.map(getSingleFeed));
             return feeds
             
@@ -39,7 +37,6 @@ function Feeds() {
 
     }
     useEffect(() => {
-        console.log('postpath', postpath)
         getFeeds(postpath)
         .then((res) => {
             setFeed(res)
@@ -54,16 +51,10 @@ function Feeds() {
     },[postpath])
        
     const handleNewPosts = () => {
-        console.log('new posts')
         setPath('new')
-       
-        console.log('feeding', feed)
     }
     const handlePastPosts = () => {
-        console.log('past posts')
-        // const path = 'top'
-        setPath('top')
-        
+        setPath('top')    
     }
     const loadMore = () => {
         setIndex(index + 30)
@@ -88,12 +79,8 @@ function Feeds() {
                            {    
                             
                               feed.slice(0,index).map((feeddata:Feeds)=>{
-                                // console.log('entering into loop', feeddata)
                                 let data:any = []
                                 data = feeddata
-                                console.log("🚀 ~ file: index.tsx ~ line 92 ~ feed.slice ~ data", data.data)
-                                
-                            
                                 return (
                                     <>
                                         <Feed 
@@ -111,9 +98,9 @@ function Feeds() {
                     }
                 </div> : <div> 404 ! </div>
             }
-
+    
             {
-                feed.length > 0 && <div className={'load_more_btn'}>
+                isLoading === false && feed.length > 5 && <div className={'load_more_btn'}>
                     <button onClick={loadMore}>{'Load More'}</button>
                 </div>
             }

@@ -11,6 +11,8 @@ export const Button = styled.button`
     line-height: 100%;
     font-weight: 700;
     cursor: pointer;
+   
+
     :focus, :active,:target {
         background-color: var(--primary-color);
     }
@@ -20,5 +22,9 @@ export const Button = styled.button`
     }
     .active-past{
         background-color: var(--primary-color);
+    }
+
+    @media (min-width:768px) {
+        font-size: 20px;
     }
 `

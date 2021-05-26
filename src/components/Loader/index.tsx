@@ -12,7 +12,9 @@ function Loader() {
 export default Loader
 
 const LoaderContainer = styled.div`
-text-align: center;
+    display: flex;
+    justify-content: center;
+    text-align: center;
     .loader {
         color:yellow;
         font-size: 10px;
@@ -24,8 +26,8 @@ text-align: center;
         transform: translateZ(0);
         -webkit-animation-delay: -0.16s;
         animation-delay: -0.16s;
-        left:50%;
-        right:50%;
+        display: flex;
+        justify-content: center;
         height:80vh;
         :before, :after{   
             content: '';
