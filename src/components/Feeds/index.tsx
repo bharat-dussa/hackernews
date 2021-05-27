@@ -28,7 +28,7 @@ function Feeds() {
         try {
             setLoading(true)
             const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            const feeds = await Promise.all(data.data.map(getSingleFeed));
+            const feeds = await Promise.all(data.data.slice(0,99).map(getSingleFeed));
             return feeds
             
           } catch (error) {
@@ -40,15 +40,18 @@ function Feeds() {
     useEffect(() => {
         getFeeds(postpath)
         .then((res) => {
+            console.log('response', res)
             setFeed(res)
-            setLoading(false)
             setError(false)
+            setLoading(false)
         })
+        
         .catch((err)=>{
             console.log('error', err)
         })
     },[postpath])
-       
+     
+    
     const handleNewPosts = () => {
         setPath('new')
     }
