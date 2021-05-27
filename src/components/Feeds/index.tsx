@@ -84,7 +84,6 @@ function Feeds() {
                                 data = feeddata
                                 return (
                                     <>
-                                        {index}
                                         <Feed 
                                             by={data?.data?.by}
                                             time={data?.data?.time}
