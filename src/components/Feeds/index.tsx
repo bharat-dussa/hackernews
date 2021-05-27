@@ -11,7 +11,7 @@ function Feeds() {
     const [isLoading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
     const [index, setIndex] = useState<number>(10);
-    const [feed, setFeed] = useState([]);
+    const [feed, setFeed] = useState<[]>([]);
     const [postpath, setPath] = useState<string>('new');
     
 
@@ -28,7 +28,7 @@ function Feeds() {
         try {
             setLoading(true)
             const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            const feeds = await Promise.all(data.data.slice(0,99).map(getSingleFeed));
+            const feeds = await Promise.all(data.data.slice(0,index).map(getSingleFeed));
             return feeds
             
           } catch (error) {
@@ -47,9 +47,10 @@ function Feeds() {
         })
         
         .catch((err)=>{
+            setError(true)
             console.log('error', err)
         })
-    },[postpath])
+    },[index,postpath])
      
     
     const handleNewPosts = () => {
@@ -59,7 +60,7 @@ function Feeds() {
         setPath('top')    
     }
     const loadMore = () => {
-        setIndex(index + 30)
+        setIndex(index + 10)
     }
     interface Feeds {
         by: string,
