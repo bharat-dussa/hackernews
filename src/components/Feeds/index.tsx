@@ -10,7 +10,7 @@ import Loader from '../Loader'
 function Feeds() {
     const [isLoading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
-    const [index, setIndex] = useState<number>(6);
+    const [index, setIndex] = useState<number>(10);
     const [feed, setFeed] = useState([]);
     const [postpath, setPath] = useState<string>('new');
     
@@ -28,7 +28,7 @@ function Feeds() {
         try {
             setLoading(true)
             const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            const feeds = await Promise.all(data.data.slice(0,99).map(getSingleFeed));
+            const feeds = await Promise.all(data.data.slice(0,index).map(getSingleFeed));
             return feeds
             
           } catch (error) {
@@ -49,7 +49,7 @@ function Feeds() {
         .catch((err)=>{
             console.log('error', err)
         })
-    },[postpath])
+    },[index])
      
     
     const handleNewPosts = () => {
@@ -79,12 +79,12 @@ function Feeds() {
                     {
                         <>
                            {    
-                            
-                              feed.slice(0,index).map((feeddata:Feeds)=>{
+                              feed.slice(0,index).map((feeddata:Feeds,index)=>{
                                 let data:any = []
                                 data = feeddata
                                 return (
                                     <>
+                                        {index}
                                         <Feed 
                                             by={data?.data?.by}
                                             time={data?.data?.time}
