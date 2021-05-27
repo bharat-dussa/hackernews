@@ -28,7 +28,7 @@ function Feeds() {
         try {
             setLoading(true)
             const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            const feeds = await Promise.all(data.data.slice(0,index).map(getSingleFeed));
+            const feeds = await Promise.all(data.data.slice(0,99).map(getSingleFeed));
             return feeds
             
           } catch (error) {
@@ -49,7 +49,7 @@ function Feeds() {
         .catch((err)=>{
             console.log('error', err)
         })
-    },[index])
+    },[postpath])
      
     
     const handleNewPosts = () => {
