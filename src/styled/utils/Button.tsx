@@ -1,6 +1,9 @@
 import styled from "styled-components";
+type Buttontype = {
+    isActive?: boolean
+}
 
-export const Button = styled.button`
+export const Button = styled.button<Buttontype>`
     text-transform: capitalize;
     border-radius: 12px;
     /* background: transparent; */
@@ -11,18 +14,7 @@ export const Button = styled.button`
     line-height: 100%;
     font-weight: 700;
     cursor: pointer;
-   
-
-    :focus, :active,:target {
-        background-color: var(--primary-color);
-    }
-
-    .active-new {
-        background-color: var(--primary-color);
-    }
-    .active-past{
-        background-color: var(--primary-color);
-    }
+    background-color: ${(props: Buttontype) => props.isActive === true && 'var(--primary-color)'};
 
     @media (min-width:768px) {
         font-size: 20px;

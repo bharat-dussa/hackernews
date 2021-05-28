@@ -1,110 +1,108 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
 import { FeedContainer } from '../../styled/Feeds/FeedContainer'
-import { Button } from '../../styled/utils/Button'
 import Feed from './Feed'
 import axios from 'axios'
 import { APP_URI } from '../../Constants'
 import Loader from '../Loader'
+import { FeedInterface } from '../../utils/interfaces/interface'
+import { POSTPATH } from '../../utils/enum'
+import  Error  from '../Error'
+import Activebutton from '../Activebutton/index'
 
 function Feeds() {
     const [isLoading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
     const [index, setIndex] = useState<number>(10);
-    const [feed, setFeed] = useState<[]>([]);
+    const [feed, setFeed] = useState<FeedInterface[]>([]);
     const [postpath, setPath] = useState<string>('new');
-    
+    const [isActive, setActive] = useState<boolean>(true)
+    const incrementBy = 10;
+    const [initial, setInitial] = useState<number>(0);
 
     const getSingleFeed = async (feedId: number) => {
         try {
             const singlefeed = await axios.get(`${APP_URI}/item/${feedId}.json`);
             return singlefeed
-            
-          } catch (error) {
+
+        } catch (error) {
             return error
-          }
+        }
     }
     const getFeeds = async (value: string) => {
         try {
             setLoading(true)
             const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            const feeds = await Promise.all(data.data.slice(0,index).map(getSingleFeed));
+            const feeds = await Promise.all(data.data.slice(initial,index).map(getSingleFeed));
             return feeds
-            
-          } catch (error) {
-            setError(true)
+
+        } catch (error) {
+            setLoading(false)
+            setError(error)
             return error
-          }
+        }
 
     }
+    
     useEffect(() => {
         getFeeds(postpath)
-        .then((res) => {
-            console.log('response', res)
-            setFeed(res)
-            setError(false)
-            setLoading(false)
-        })
-        
-        .catch((err)=>{
-            setError(true)
-            console.log('error', err)
-        })
-    },[index,postpath])
-     
-    
+            .then((res) => {
+                setLoading(false)
+                setFeed(res)
+                setLoading(false)
+            })
+
+            .catch((err) => {
+                setError(err)
+                console.log('error', err)
+            })
+    }, [index, postpath])
+
+
     const handleNewPosts = () => {
-        setPath('new')
+        setPath(POSTPATH.NEW)
+        setActive(true)
     }
     const handlePastPosts = () => {
-        setPath('top')    
+        setPath(POSTPATH.PAST)
+        setActive(false)
     }
     const loadMore = () => {
-        setIndex(index + 10)
+        const edgenumber = index + incrementBy;
+        setInitial(edgenumber);
+        setIndex(edgenumber + incrementBy)
     }
-    interface Feeds {
-        by: string,
-        time: number,
-        title: string,
-        type: string,
-        url: string
+    
+    if (error){
+        return <Error  />
     }
+   
     return (
         <FeedContainer>
             <div className={'filter_container'}>
-                <Button  onClick={handleNewPosts}>{'new'}</Button>
-                <Button  onClick={handlePastPosts}>{'past'}</Button>
+               <Activebutton handleClick={handleNewPosts} isActive={isActive} name={POSTPATH.NEW}/>
+               <Activebutton handleClick={handlePastPosts} isActive={!isActive} name={POSTPATH.PAST_NAME}/>
             </div>
             {
-                error === false ? isLoading ? <Loader /> : <div className={'feed_section'}>
+                isLoading ? <Loader /> : <div className={'feed_section'}>
                     {
-                        <>
-                           {    
-                              feed.slice(0,index).map((feeddata:Feeds,index)=>{
-                                let data:any = []
-                                data = feeddata
-                                return (
-                                    <>
-                                        <Feed 
-                                            by={data?.data?.by}
-                                            time={data?.data?.time}
-                                            title={data?.data?.title}
-                                            type={data?.data?.type}
-                                            url={data?.data?.url}
-                                        />
-                                    </>
-                                )
-                              })
-                           }
-                        </>
+                        feed.slice(0, index).map((feeddata:FeedInterface) => {
+                            return (
+                                <>
+                                    <Feed
+                                        {...feeddata}
+                                    />
+                                </>
+                            )
+                        })
                     }
-                </div> : <div> 404 ! </div>
+                </div>
             }
-    
+
             {
                 isLoading === false && feed.length > 5 && <div className={'load_more_btn'}>
                     <button onClick={loadMore}>{'Load More'}</button>
-                </div> 
+                </div>
             }
         </FeedContainer>
     )
