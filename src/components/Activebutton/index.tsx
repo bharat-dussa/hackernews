@@ -8,8 +8,6 @@ interface buttonprops  {
 }
 
 const Activebutton:React.FC<buttonprops> = (Props: buttonprops) => {
-    
-    console.log('isActive', Props.isActive)
     return (
         <Button onClick={Props.handleClick} isActive={Props.isActive}>{Props.name}</Button>
     )

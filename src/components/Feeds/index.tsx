@@ -54,7 +54,6 @@ function Feeds() {
 
             .catch((err) => {
                 setError(err)
-                console.log('error', err)
             })
     }, [index, postpath])
 

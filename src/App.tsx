@@ -7,7 +7,6 @@ import ScrollToTop from "react-scroll-to-top";
 
 function App() {
 
-  console.log(process.env)
   return (
 
     <div className="App">
