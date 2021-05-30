@@ -4,6 +4,7 @@ export const FeedContainer = styled.main`
     color:var(--grey-text);
     /* opacity: 80%; */
     margin: 20px 16px;
+    transition: margin 2s;
     .filter_container {
         display: flex;
         gap:07px;
@@ -25,4 +26,6 @@ export const FeedContainer = styled.main`
         }
     }
 `
-
+export const Pagination = styled.div`
+    
+`

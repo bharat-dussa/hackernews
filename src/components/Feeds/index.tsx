@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
-import { FeedContainer } from '../../styled/Feeds/FeedContainer'
+import { FeedContainer, Pagination } from '../../styled/Feeds/FeedContainer'
 import Feed from './Feed'
 import axios from 'axios'
 import { APP_URI } from '../../Constants'
@@ -10,15 +10,16 @@ import { POSTPATH } from '../../utils/enum'
 import  Error  from '../Error'
 import Activebutton from '../Activebutton/index'
 
+
 function Feeds() {
     const [isLoading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
-    const [index, setIndex] = useState<number>(10);
+    const [index, setIndex] = useState<number>(0);
     const [feed, setFeed] = useState<FeedInterface[]>([]);
+    const [remainingfeeds, setRemainingFeeds] = useState<FeedInterface[]>([]);
     const [postpath, setPath] = useState<string>('new');
     const [isActive, setActive] = useState<boolean>(true)
-    const incrementBy = 10;
-    const [initial, setInitial] = useState<number>(0);
+    const incrementBy = 10; // increaase to 50 per
 
     const getSingleFeed = async (feedId: number) => {
         try {
@@ -33,7 +34,7 @@ function Feeds() {
         try {
             setLoading(true)
             const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            const feeds = await Promise.all(data.data.slice(initial,index).map(getSingleFeed));
+            const feeds = await Promise.all(data.data.slice(0,50).map(getSingleFeed));
             return feeds
 
         } catch (error) {
@@ -43,52 +44,81 @@ function Feeds() {
         }
 
     }
-    
+    const getRemainingFeeds = async(value: string) => {
+        try{
+            setLoading(true)
+            const data = await axios.get(`${APP_URI}/${value}stories.json`);
+            const feeds = await Promise.all(data.data.slice(50,data.data.length).map(getSingleFeed));
+            return feeds
+        }
+        catch(error){
+            setError(error)
+            return error
+        }
+    }
     useEffect(() => {
-        getFeeds(postpath)
-            .then((res) => {
-                setLoading(false)
-                setFeed(res)
-                setLoading(false)
-            })
+       getFeeds(postpath)
+       .then((res) => {
+           setLoading(false)
+           setFeed(res)
+           setLoading(false)
+       })
 
-            .catch((err) => {
-                setError(err)
-            })
-    }, [index, postpath])
-
-
+       .catch((err) => {
+           setError(err)
+       }) 
+   getRemainingFeeds(postpath)
+       .then((res) =>{
+           setRemainingFeeds(res)
+       })   
+    }, [postpath])
+    
     const handleNewPosts = () => {
         setPath(POSTPATH.NEW)
+        setIndex(0)
         setActive(true)
+
     }
     const handlePastPosts = () => {
-        setPath(POSTPATH.PAST)
+        setPath(POSTPATH.TOP)
+        setIndex(0)
         setActive(false)
     }
     const loadMore = () => {
-        const edgenumber = index + incrementBy;
-        setInitial(edgenumber);
-        setIndex(edgenumber + incrementBy)
+        // const edgenumber = index + incrementBy;
+        // initial = index;
+        setIndex(index + incrementBy)
     }
     
     if (error){
         return <Error  />
     }
-   
     return (
         <FeedContainer>
             <div className={'filter_container'}>
                <Activebutton handleClick={handleNewPosts} isActive={isActive} name={POSTPATH.NEW}/>
-               <Activebutton handleClick={handlePastPosts} isActive={!isActive} name={POSTPATH.PAST_NAME}/>
+               <Activebutton handleClick={handlePastPosts} isActive={!isActive} name={POSTPATH.TOP}/>
             </div>
             {
-                isLoading ? <Loader /> : <div className={'feed_section'}>
+             isLoading ? <Loader /> : <div className={'feed_section'}>
                     {
-                        feed.slice(0, index).map((feeddata:FeedInterface) => {
+                        feed.map((feeddata:FeedInterface, index1) => {
                             return (
                                 <>
                                     <Feed
+                                        key={index}
+                                        {...feeddata}
+                                    />
+                                </>
+                            )
+                        })
+                    }
+                    {
+                      feed.length > 49 && remainingfeeds.slice(0,index).map((feeddata: FeedInterface, index1)=>{
+                            return(
+                                <>
+                                    <Feed 
+                                        key={index1}
                                         {...feeddata}
                                     />
                                 </>
@@ -97,7 +127,11 @@ function Feeds() {
                     }
                 </div>
             }
-
+            <Pagination>
+                <div>
+                    <span>{index}</span>
+                </div>
+            </Pagination>
             {
                 isLoading === false && feed.length > 5 && <div className={'load_more_btn'}>
                     <button onClick={loadMore}>{'Load More'}</button>
