@@ -9,5 +9,9 @@ export const NavbarContainer = styled.nav`
         width:100%;
         box-shadow: 0px 3px 28px rgba(0,0,0,0.08);
         margin-bottom:2rem;
+
+        @media (max-width:768px) {
+            height:10vh;
+        }
     }
 `

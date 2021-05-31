@@ -25,7 +25,28 @@ export const FeedContainer = styled.main`
             font-weight:700;
         }
     }
-`
-export const Pagination = styled.div`
-    
+
+
+    .collapse_btn {
+        /* display: flex;
+        justify-content: flex-end; */
+        /* margin-top:50px; */
+        position: fixed;
+        bottom:40px;
+        left:40px;
+        cursor:pointer;
+        z-index:2;
+       
+        button{
+            background-color:white;
+            cursor:pointer;
+            border:none;
+            width:50px;
+            height:50px;
+            border-radius: 7px;
+            transition: opacity 1s ease-in-out;
+            box-shadow: 0px 9px 25px 0 #1d1c2247;
+            outline:none;
+        }
+    }
 `

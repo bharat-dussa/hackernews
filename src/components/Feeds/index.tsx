@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react'
-import { FeedContainer, Pagination } from '../../styled/Feeds/FeedContainer'
+import { FeedContainer } from '../../styled/Feeds/FeedContainer'
 import Feed from './Feed'
 import axios from 'axios'
 import { APP_URI } from '../../Constants'
@@ -20,7 +20,7 @@ function Feeds() {
     const [postpath, setPath] = useState<string>('new');
     const [isActive, setActive] = useState<boolean>(true)
     const incrementBy = 10; // increaase to 50 per
-
+    const [showResetbtn, setShowResetbtn] = useState(false)
     const getSingleFeed = async (feedId: number) => {
         try {
             const singlefeed = await axios.get(`${APP_URI}/item/${feedId}.json`);
@@ -88,8 +88,9 @@ function Feeds() {
         // const edgenumber = index + incrementBy;
         // initial = index;
         setIndex(index + incrementBy)
+        setShowResetbtn(true)
     }
-    
+
     if (error){
         return <Error  />
     }
@@ -101,12 +102,12 @@ function Feeds() {
             </div>
             {
              isLoading ? <Loader /> : <div className={'feed_section'}>
-                    {
+                    {  
                         feed.map((feeddata:FeedInterface, index1) => {
                             return (
-                                <>
+                                <> 
                                     <Feed
-                                        key={index}
+                                        key={index1}
                                         {...feeddata}
                                     />
                                 </>
@@ -127,14 +128,15 @@ function Feeds() {
                     }
                 </div>
             }
-            <Pagination>
-                <div>
-                    <span>{index}</span>
-                </div>
-            </Pagination>
             {
                 isLoading === false && feed.length > 5 && <div className={'load_more_btn'}>
                     <button onClick={loadMore}>{'Load More'}</button>
+                </div>
+            }
+            {
+                showResetbtn && 
+                <div className={'collapse_btn'}>
+                    <button onClick={() => {setIndex(0); setShowResetbtn(false)}}><img src="https://img.icons8.com/ios-glyphs/26/000000/available-updates.png" alt="reset"/></button>
                 </div>
             }
         </FeedContainer>
