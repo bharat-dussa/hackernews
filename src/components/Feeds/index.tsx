@@ -9,6 +9,7 @@ import { FeedInterface } from '../../utils/interfaces/interface'
 import { POSTPATH } from '../../utils/enum'
 import  Error  from '../Error'
 import Activebutton from '../Activebutton/index'
+import { Resetbutton } from '../Resetbutton'
 
 
 function Feeds() {
@@ -19,8 +20,11 @@ function Feeds() {
     const [remainingfeeds, setRemainingFeeds] = useState<FeedInterface[]>([]);
     const [postpath, setPath] = useState<string>('new');
     const [isActive, setActive] = useState<boolean>(true)
-    const incrementBy = 10; // increaase to 50 per
+    const incrementBy = 50; // increaase to 50 per
     const [showResetbtn, setShowResetbtn] = useState(false)
+
+    
+
     const getSingleFeed = async (feedId: number) => {
         try {
             const singlefeed = await axios.get(`${APP_URI}/item/${feedId}.json`);
@@ -73,6 +77,10 @@ function Feeds() {
        })   
     }, [postpath])
     
+
+    const totalFeedLength = feed.length + remainingfeeds.length;
+    const currentArticleLoaded = feed.length + index;
+
     const handleNewPosts = () => {
         setPath(POSTPATH.NEW)
         setIndex(0)
@@ -87,8 +95,11 @@ function Feeds() {
     const loadMore = () => {
         // const edgenumber = index + incrementBy;
         // initial = index;
-        setIndex(index + incrementBy)
-        setShowResetbtn(true)
+        if(index < totalFeedLength) {
+            setIndex(index + incrementBy)
+            setShowResetbtn(true)
+        }
+        
     }
 
     if (error){
@@ -130,15 +141,19 @@ function Feeds() {
             }
             {
                 isLoading === false && feed.length > 5 && <div className={'load_more_btn'}>
-                    <button onClick={loadMore}>{'Load More'}</button>
+                    <button disabled={index===totalFeedLength - 1} onClick={loadMore}>{'Load More'}</button>
                 </div>
             }
             {
-                showResetbtn && 
-                <div className={'collapse_btn'}>
-                    <button onClick={() => {setIndex(0); setShowResetbtn(false)}}><img src="https://img.icons8.com/ios-glyphs/26/000000/available-updates.png" alt="reset"/></button>
-                </div>
+                showResetbtn &&  
+                <Resetbutton 
+                    totalFeedLength={totalFeedLength}
+                    currentArticleLoaded={currentArticleLoaded} 
+                    setIndex={setIndex} 
+                    setShowResetbtn={setShowResetbtn}
+                />
             }
+
         </FeedContainer>
     )
 }
