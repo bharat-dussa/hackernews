@@ -140,7 +140,7 @@ function Feeds() {
                 </div>
             }
             {
-                isLoading === false && feed.length > 5 && <div className={'load_more_btn'}>
+                currentArticleLoaded < totalFeedLength && isLoading === false && feed.length > 5 && <div className={'load_more_btn'}>
                     <button disabled={index===totalFeedLength - 1} onClick={loadMore}>{'Load More'}</button>
                 </div>
             }
