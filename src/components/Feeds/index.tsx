@@ -7,23 +7,20 @@ import { APP_URI } from '../../Constants'
 import Loader from '../Loader'
 import { FeedInterface } from '../../utils/interfaces/interface'
 import { POSTPATH } from '../../utils/enum'
-import  Error  from '../Error'
+import Error from '../Error'
 import Activebutton from '../Activebutton/index'
-import { Resetbutton } from '../Resetbutton'
 
 
 function Feeds() {
     const [isLoading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
-    const [index, setIndex] = useState<number>(0);
+    const [index, setIndex] = useState<number>(10);
     const [feed, setFeed] = useState<FeedInterface[]>([]);
-    const [remainingfeeds, setRemainingFeeds] = useState<FeedInterface[]>([]);
     const [postpath, setPath] = useState<string>('new');
     const [isActive, setActive] = useState<boolean>(true)
-    const incrementBy = 50; // increaase to 50 per
-    const [showResetbtn, setShowResetbtn] = useState(false)
-
-    
+    const incrementBy = 10; // increaase to 50 per
+    const [initial, setInitial] = useState<number>(0);
+    const [totalResponseLength, setTotalResponseLength] = useState<number>(0);
 
     const getSingleFeed = async (feedId: number) => {
         try {
@@ -38,8 +35,8 @@ function Feeds() {
         try {
             setLoading(true)
             const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            const feeds = await Promise.all(data.data.slice(0,50).map(getSingleFeed));
-            return feeds
+            const feeds = await Promise.all(data.data.slice(initial, index).map(getSingleFeed));
+            return [feeds, data]
 
         } catch (error) {
             setLoading(false)
@@ -48,75 +45,62 @@ function Feeds() {
         }
 
     }
-    const getRemainingFeeds = async(value: string) => {
-        try{
-            setLoading(true)
-            const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            const feeds = await Promise.all(data.data.slice(50,data.data.length).map(getSingleFeed));
-            return feeds
-        }
-        catch(error){
-            setError(error)
-            return error
-        }
-    }
     useEffect(() => {
-       getFeeds(postpath)
-       .then((res) => {
-           setLoading(false)
-           setFeed(res)
-           setLoading(false)
-       })
+        getFeeds(postpath)
+            .then((res) => {
+                console.log('res[0]', res[0])
+                console.log('res[1]', res[1])
+                setLoading(false)
+                setFeed(res[0])
+                setLoading(false)
+                setTotalResponseLength(res[1].data.length)
+            })
 
-       .catch((err) => {
-           setError(err)
-       }) 
-   getRemainingFeeds(postpath)
-       .then((res) =>{
-           setRemainingFeeds(res)
-       })   
-    }, [postpath])
-    
-
-    const totalFeedLength = feed.length + remainingfeeds.length;
-    const currentArticleLoaded = feed.length + index;
+            .catch((err) => {
+                setError(err)
+            })
+    }, [index, postpath])
 
     const handleNewPosts = () => {
+        setInitial(0);
+        setIndex(10);
         setPath(POSTPATH.NEW)
-        setIndex(0)
         setActive(true)
 
     }
     const handlePastPosts = () => {
         setPath(POSTPATH.TOP)
-        setIndex(0)
+        setInitial(0);
+        setIndex(10);
         setActive(false)
     }
     const loadMore = () => {
-        // const edgenumber = index + incrementBy;
-        // initial = index;
-        if(index < totalFeedLength) {
-            setIndex(index + incrementBy)
-            setShowResetbtn(true)
-        }
-        
+        const edgenumber = index;
+        setInitial(edgenumber);
+        setIndex(edgenumber + incrementBy)
     }
+    const handleReset = () => {
+        setInitial(0);
+        setIndex(10);
+    }
+    if (error) {
+        return <Error />
+    }
+    const totalPages = totalResponseLength / 10;
 
-    if (error){
-        return <Error  />
-    }
+    console.log('index value:', index);
     return (
         <FeedContainer>
             <div className={'filter_container'}>
-               <Activebutton handleClick={handleNewPosts} isActive={isActive} name={POSTPATH.NEW}/>
-               <Activebutton handleClick={handlePastPosts} isActive={!isActive} name={POSTPATH.TOP}/>
+                <Activebutton handleClick={handleNewPosts} isActive={isActive} name={POSTPATH.NEW} />
+                <Activebutton handleClick={handlePastPosts} isActive={!isActive} name={POSTPATH.TOP} />
             </div>
             {
-             isLoading ? <Loader /> : <div className={'feed_section'}>
-                    {  
-                        feed.map((feeddata:FeedInterface, index1) => {
+                isLoading ? <Loader /> : <div className={'feed_section'}>
+                    {
+                        feed.map((feeddata: FeedInterface, index1) => {
                             return (
-                                <> 
+                                <>
                                     <Feed
                                         key={index1}
                                         {...feeddata}
@@ -125,33 +109,24 @@ function Feeds() {
                             )
                         })
                     }
-                    {
-                      feed.length > 49 && remainingfeeds.slice(0,index).map((feeddata: FeedInterface, index1)=>{
-                            return(
-                                <>
-                                    <Feed 
-                                        key={index1}
-                                        {...feeddata}
-                                    />
-                                </>
-                            )
-                        })
-                    }
                 </div>
+
             }
             {
                 isLoading === false && feed.length > 5 && <div className={'load_more_btn'}>
-                    <button disabled={index===totalFeedLength - 1} onClick={loadMore}>{'Load More'}</button>
+                    <button onClick={loadMore}>{'Load More'}</button>
                 </div>
             }
-            {
-                showResetbtn &&  
-                <Resetbutton 
-                    totalFeedLength={totalFeedLength}
-                    currentArticleLoaded={currentArticleLoaded} 
-                    setIndex={setIndex} 
-                    setShowResetbtn={setShowResetbtn}
-                />
+            {   isLoading===false &&
+                <div className={'collapse_btn'}>
+                    <div className={'pagination_'}>
+                        pages: <span>{index / 10}</span> / <span>{totalPages}</span>
+                    </div>
+
+                    <div>
+                        <button onClick={handleReset}><img src="https://img.icons8.com/ios-glyphs/26/000000/available-updates.png" alt="reset" /></button>
+                    </div>
+                </div>
             }
 
         </FeedContainer>

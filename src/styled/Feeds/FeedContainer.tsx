@@ -28,31 +28,25 @@ export const FeedContainer = styled.main`
 
 
     .collapse_btn {
-        /* display: flex;
-        justify-content: flex-end; */
-        /* margin-top:50px; */
-        position: fixed;
-        bottom:100px;
-        right:40px;
-        cursor:pointer;
-        justify-content: center;
-        align-items: center;
-        text-align: right;
-        z-index:2;
+       display: flex;
+       margin-top:40px;
+       align-items: flex-start;
+       width:100%;
+       height: 100%;
+       justify-content: center;
+       gap:10px;
+       /* justify-content */
+       align-items: center;
         .pagination_ {
-            text-align: center;
-            background-color: white;
-            border-radius: 7px;
-            transition: opacity 1s ease-in-out;
-            box-shadow: 0px 9px 25px 0 #1d1c2247;
-            outline:none;
-            width:200px;
-            height:40px;
-            margin-bottom:10px;
-            text-align: center;
+            /* width:100px; */
             display: flex;
+            text-align: center;
             justify-content: center;
-            align-items: center;
+            gap:20px;
+            border-radius: 7px;
+        }
+        span{
+           
         }
         button{
             background-color:white;
@@ -62,7 +56,7 @@ export const FeedContainer = styled.main`
             height:50px;
             border-radius: 7px;
             transition: opacity 1s ease-in-out;
-            box-shadow: 0px 9px 25px 0 #1d1c2247;
+           
             outline:none;
 
             :hover{
