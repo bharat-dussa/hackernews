@@ -78,10 +78,12 @@ function Feeds() {
         const edgenumber = index;
         setInitial(edgenumber);
         setIndex(edgenumber + incrementBy)
+        window.scrollTo(0, 0)
     }
     const handleReset = () => {
         setInitial(0);
         setIndex(10);
+        window.scrollTo(0, 0)
     }
     if (error) {
         return <Error />
