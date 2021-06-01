@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { FeedContainer } from '../../styled/Feeds/FeedContainer'
 import Feed from './Feed'
 import axios from 'axios'
@@ -10,11 +10,11 @@ import { POSTPATH } from '../../utils/enum'
 import Error from '../Error'
 import Activebutton from '../Activebutton/index'
 
+
 function Feeds() {
-    const [contentPerPage, setContentPerPage]=useState<number>(10);
     const [isLoading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
-    const [index, setIndex] = useState<number>(contentPerPage);
+    const [index, setIndex] = useState<number>(10);
     const [feed, setFeed] = useState<FeedInterface[]>([]);
     const [postpath, setPath] = useState<string>('new');
     const [isActive, setActive] = useState<boolean>(true)
@@ -22,7 +22,7 @@ function Feeds() {
     const [initial, setInitial] = useState<number>(0);
     const [totalResponseLength, setTotalResponseLength] = useState<number>(0);
     const [newsIds, setNewsids]= useState<number[]>([]);
-   
+    // const []
     const getSingleFeed = async (feedId: number) => {
         try {
             const singlefeed = await axios.get(`${APP_URI}/item/${feedId}.json`);
@@ -64,7 +64,7 @@ function Feeds() {
 
     useEffect(() => {
         
-            getFeeds(newsIds, contentPerPage, initial )
+            getFeeds(newsIds, index, initial )
             .then((res) => {
                 setLoading(false)
                 setFeed(res)
@@ -75,7 +75,7 @@ function Feeds() {
             .catch((err) => {
                 setError(err)
             })
-    }, [newsIds,index,initial,contentPerPage])
+    }, [newsIds,index,initial])
 
     const handleNewPosts = () => {
         setInitial(0);
@@ -108,12 +108,15 @@ function Feeds() {
     }
     const totalPages = totalResponseLength / 10;
 
+<<<<<<< HEAD
     const handleChange = (selectedOption:React.FormEvent<HTMLSelectElement>) => {
         var targetnode:string = selectedOption.currentTarget.value;
         setContentPerPage(parseInt(targetnode));
         setIndex(contentPerPage);
     }
 
+=======
+>>>>>>> parent of 05d4b94... add select option
     return (
         <FeedContainer>
             <div className={'filter_container'}>
@@ -144,15 +147,6 @@ function Feeds() {
             }
             {   isLoading===false &&
                 <div className={'collapse_btn'}>
-                    
-                    <div>
-                        <select value={contentPerPage} onChange={(e)=>handleChange(e)}>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                            <option value="40">40</option>
-                        </select>
-                    </div>
                     <div className={'pagination_'}>
                         pages: <span>{index / 10}</span> / <span>{totalPages}</span>
                     </div>
@@ -160,10 +154,9 @@ function Feeds() {
                     <div>
                         <button onClick={handleReset}><img src="https://img.icons8.com/ios-glyphs/26/000000/available-updates.png" alt="reset" /></button>
                     </div>
-
                 </div>
             }
-            
+
         </FeedContainer>
     )
 }
