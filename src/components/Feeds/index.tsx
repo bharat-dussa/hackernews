@@ -21,7 +21,8 @@ function Feeds() {
     const incrementBy = 10; // increaase to 50 per
     const [initial, setInitial] = useState<number>(0);
     const [totalResponseLength, setTotalResponseLength] = useState<number>(0);
-
+    const [newsIds, setNewsids]= useState<number[]>([]);
+    // const []
     const getSingleFeed = async (feedId: number) => {
         try {
             const singlefeed = await axios.get(`${APP_URI}/item/${feedId}.json`);
@@ -31,12 +32,11 @@ function Feeds() {
             return error
         }
     }
-    const getFeeds = async (value: string) => {
+    const getFeeds = async (newIdsArray: number[], firstindex:number, lastinitial:number) => {
         try {
             setLoading(true)
-            const data = await axios.get(`${APP_URI}/${value}stories.json`);
-            const feeds = await Promise.all(data.data.slice(initial, index).map(getSingleFeed));
-            return [feeds, data]
+            const feeds = await Promise.all(newIdsArray.slice(lastinitial, firstindex).map(getSingleFeed));
+            return feeds
 
         } catch (error) {
             setLoading(false)
@@ -45,25 +45,42 @@ function Feeds() {
         }
 
     }
+
+    useEffect(()=>{
+        async function getIds(){
+            const data = await (await fetch(`${APP_URI}/${postpath}stories.json`)).json()
+            
+            return data
+        }
+        getIds()
+            .then((res)=>{
+                setNewsids(res)
+            })
+
+            return(()=>{
+                setNewsids([])
+            })
+    }, [postpath])
+
     useEffect(() => {
-        getFeeds(postpath)
+        
+            getFeeds(newsIds, index, initial )
             .then((res) => {
-                console.log('res[0]', res[0])
-                console.log('res[1]', res[1])
                 setLoading(false)
-                setFeed(res[0])
+                setFeed(res)
                 setLoading(false)
-                setTotalResponseLength(res[1].data.length)
+                setTotalResponseLength(newsIds.length)
             })
 
             .catch((err) => {
                 setError(err)
             })
-    }, [index, postpath])
+    }, [newsIds,index,initial])
 
     const handleNewPosts = () => {
         setInitial(0);
         setIndex(10);
+        setNewsids([])
         setPath(POSTPATH.NEW)
         setActive(true)
 
@@ -71,6 +88,7 @@ function Feeds() {
     const handlePastPosts = () => {
         setPath(POSTPATH.TOP)
         setInitial(0);
+        setNewsids([])
         setIndex(10);
         setActive(false)
     }
@@ -90,7 +108,6 @@ function Feeds() {
     }
     const totalPages = totalResponseLength / 10;
 
-    console.log('index value:', index);
     return (
         <FeedContainer>
             <div className={'filter_container'}>
