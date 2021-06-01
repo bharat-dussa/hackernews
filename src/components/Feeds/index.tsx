@@ -109,12 +109,15 @@ function Feeds() {
     const totalPages = totalResponseLength / 10;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     const handleChange = (selectedOption:React.FormEvent<HTMLSelectElement>) => {
         var targetnode:string = selectedOption.currentTarget.value;
         setContentPerPage(parseInt(targetnode));
         setIndex(contentPerPage);
     }
 
+=======
+>>>>>>> parent of 05d4b94... add select option
 =======
 >>>>>>> parent of 05d4b94... add select option
     return (
