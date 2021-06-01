@@ -109,10 +109,9 @@ function Feeds() {
     const totalPages = totalResponseLength / 10;
 
     const handleChange = (selectedOption:React.FormEvent<HTMLSelectElement>) => {
-        var targetnode:string = selectedOption.currentTarget.value 
-        console.log('selectedOption', targetnode)
-        setContentPerPage(parseInt(targetnode))
-        setIndex(contentPerPage)
+        var targetnode:string = selectedOption.currentTarget.value;
+        setContentPerPage(parseInt(targetnode));
+        setIndex(contentPerPage);
     }
 
     return (
