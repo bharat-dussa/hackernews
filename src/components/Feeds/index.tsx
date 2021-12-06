@@ -96,7 +96,7 @@ function Feeds() {
         const edgenumber = index;
         setInitial(edgenumber);
         setIndex(edgenumber + incrementBy)
-        window.scrollTo(0, 0)
+        window.scrollTo(0, 0);
     }
     const handleReset = () => {
         setInitial(0);
